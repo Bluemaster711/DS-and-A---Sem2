@@ -111,10 +111,23 @@ void compute_mandelbrot(double left, double right, double top, double bottom)
 			{
 				// z escaped within less than MAX_ITERATIONS
 				// iterations. This point isn't in the set.
-				image[y][x] = 0x89CFF0; // blue or could be white 0xFFFFF
-				
-				
+				//image[y][x] = 0x89CFF0; // blue or could be white 0xFFFFFF
 
+				int style = iterations;
+
+				
+					if (style % 2 == 0) {
+
+						image[y][x] = 0x89CFF0;
+
+					}
+
+					else {
+						image[y][x] = 0xFFFFFF;
+					}
+
+			
+			
 			}
 		
 		}
