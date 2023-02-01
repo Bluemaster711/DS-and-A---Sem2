@@ -1,5 +1,3 @@
-// Mandelbrot set example
-// Adam Sampson <a.sampson@abertay.ac.uk>
 
 #include <chrono>
 #include <cstdint>
@@ -8,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 
-// Import things we need from the standard library
+// Import things we need from the standard libraries.
 using std::chrono::duration_cast;
 using std::chrono::milliseconds;
 using std::complex;
@@ -20,7 +18,7 @@ using std::ofstream;
 typedef std::chrono::steady_clock the_clock;
 
 
-// The size of the image to generate.
+// Image size
 const int WIDTH = 1920;
 const int HEIGHT = 1200;
 
@@ -113,8 +111,12 @@ void compute_mandelbrot(double left, double right, double top, double bottom)
 			{
 				// z escaped within less than MAX_ITERATIONS
 				// iterations. This point isn't in the set.
-				image[y][x] = 0xFFFFFF; // white
+				image[y][x] = 0x89CFF0; // blue or could be white 0xFFFFF
+				
+				
+
 			}
+		
 		}
 	}
 }
@@ -129,6 +131,9 @@ int main(int argc, char *argv[])
 
 	// This shows the whole set.
 	compute_mandelbrot(-2.0, 1.0, 1.125, -1.125);
+	//took 1740ms to finsh
+	//compute_mandelbrot(-1.0, 2.3, 2.0, -1.50);
+	//took 969ms to finish
 
 	// This zooms in on an interesting bit of detail.
 	//compute_mandelbrot(-0.751085, -0.734975, 0.118378, 0.134488);
