@@ -5,14 +5,18 @@
 #include <complex>
 #include <fstream>
 #include <iostream>
+#include <vector>
+#include <thread>
 
 // Import things we need from the standard libraries.
 using std::chrono::duration_cast;
 using std::chrono::milliseconds;
+using std::chrono::nanoseconds;
 using std::complex;
 using std::cout;
 using std::endl;
 using std::ofstream;
+using std::thread;
 
 // Define the alias "the_clock" for the clock type we're going to use.
 typedef std::chrono::steady_clock the_clock;
@@ -25,7 +29,7 @@ const int HEIGHT = 1200;
 // The number of times to iterate before we assume that a point isn't in the
 // Mandelbrot set.
 // (You may need to turn this up if you zoom further into the set.)
-const int MAX_ITERATIONS = 500;
+const int MAX_ITERATIONS = 10000;
 
 // The image data.
 // Each pixel is represented as 0xRRGGBB.
@@ -75,32 +79,24 @@ void write_tga(const char *filename)
 }
 
 
-// Render the Mandelbrot set into the image array.
-// The parameters specify the region on the complex plane to plot.
-void compute_mandelbrot(double left, double right, double top, double bottom)
-{
-	for (int y = 0; y < HEIGHT; ++y)
-	{
-		for (int x = 0; x < WIDTH; ++x)
+void compute_thred(float left, float right, float top, float bottom, float start, float end) {
+	for (unsigned y = start; y < end; y++) {
+		for (unsigned x = 0; x < WIDTH; x++)
 		{
 			// Work out the point in the complex plane that
-			// corresponds to this pixel in the output image.
-			complex<double> c(left + (x * (right - left) / WIDTH),
+				// corresponds to this pixel in the output image.
+			complex<float> c(left + (x * (right - left) / WIDTH),
 				top + (y * (bottom - top) / HEIGHT));
-
 			// Start off z at (0, 0).
-			complex<double> z(0.0, 0.0);
-
+			complex<float> z(0.0, 0.0);
 			// Iterate z = z^2 + c until z moves more than 2 units
 			// away from (0, 0), or we've iterated too many times.
 			int iterations = 0;
 			while (abs(z) < 2.0 && iterations < MAX_ITERATIONS)
 			{
 				z = (z * z) + c;
-
 				++iterations;
 			}
-
 			if (iterations == MAX_ITERATIONS)
 			{
 				// z didn't escape from the circle.
@@ -113,24 +109,82 @@ void compute_mandelbrot(double left, double right, double top, double bottom)
 				// iterations. This point isn't in the set.
 				//image[y][x] = 0x89CFF0; // blue or could be white 0xFFFFFF
 
-				int style = iterations;
-
-				
-					if (style % 2 == 0) {
-
-						image[y][x] = 0x89CFF0;
-
-					}
-
-					else {
-						image[y][x] = 0xFFFFFF;
-					}
-
-			
-			
+				if (iterations <= 25)
+				{
+					image[y][x] = 0xFF0000;
+				}
+				else if (iterations <= 50)
+				{
+					image[y][x] = 0xFE6904;
+				}
+				else if (iterations <= 75)
+				{
+					image[y][x] = 0xFEE104;
+				}
+				else if (iterations <= 100)
+				{
+					image[y][x] = 0xB6FE04;
+				}
+				else if (iterations <= 125)
+				{
+					image[y][x] = 0x13FE04;
+				}
+				else if (iterations <= 150)
+				{
+					image[y][x] = 0x04FEA8;
+				}
+				else if (iterations <= 175)
+				{
+					image[y][x] = 0x04E1FE;
+				}
+				else if (iterations <= 200)
+				{
+					image[y][x] = 0x045BFE;
+				}
+				else if (iterations <= 250)
+				{
+					image[y][x] = 0x0904FE;
+				}
+				else if (iterations <= 300)
+				{
+					image[y][x] = 0x9404FE;
+				}
+				else if (iterations <= 400)
+				{
+					image[y][x] = 0xFE04E1;
+				}
+				else if (iterations <= 450)
+				{
+					image[y][x] = 0xFE047C;
+				}
+				else
+				{
+					image[y][x] = 0xFE0404;
+				}
 			}
-		
 		}
+	}
+}
+
+
+// Render the Mandelbrot set into the image array.
+// The parameters specify the region on the complex plane to plot.
+void compute_mandelbrot(float left, float right, float top, float bottom, float start, float end)
+{
+	//amount of threads to use
+	const int THREADS = 100;
+
+	//create vector of threads by rendering_threads
+	std::vector<thread>render_threads;
+	//researve created threads
+	render_threads.reserve(THREADS);
+
+	//loop through compute_mandelbrot set
+	for (unsigned y = 0; y < HEIGHT; y += HEIGHT / THREADS) {
+		render_threads.emplace_back(&compute_thred, left, right, top, bottom, y, y + HEIGHT / THREADS);
+	}
+	for (auto& thread : render_threads) {
+		thread.join();
 	}
 }
 
@@ -143,22 +197,29 @@ int main(int argc, char *argv[])
 	the_clock::time_point start = the_clock::now();
 
 	// This shows the whole set.
-	compute_mandelbrot(-2.0, 1.0, 1.125, -1.125);
+	//compute_mandelbrot(-2.0, 1.0, 1.125, -1.125, 200, 400);
+	//compute_mandelbrot(-2.0, 1.0, 1.125, -1.125, 0, 1200); //takes 1215809700ns
+	//
 	//took 1740ms to finsh
+	// getting 2994ms to finish next day
 	//compute_mandelbrot(-1.0, 2.3, 2.0, -1.50);
 	//took 969ms to finish
 
 	// This zooms in on an interesting bit of detail.
-	//compute_mandelbrot(-0.751085, -0.734975, 0.118378, 0.134488);
+	compute_mandelbrot(-0.751085, -0.734975, 0.118378, 0.134488, 0, 1200);
+
 
 	// Stop timing
 	the_clock::time_point end = the_clock::now();
 
 	// Compute the difference between the two times in milliseconds
+	//would nanoseconds be more accuate?
+
+	//could use nanoseconds
 	auto time_taken = duration_cast<milliseconds>(end - start).count();
 	cout << "Computing the Mandelbrot set took " << time_taken << " ms." << endl;
 
-	write_tga("output.tga");
+	write_tga("outputcolortesting2.tga");
 
 	return 0;
 }
