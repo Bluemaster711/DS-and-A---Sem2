@@ -23,13 +23,13 @@ typedef std::chrono::steady_clock the_clock;
 
 
 // Image size
-const int WIDTH = 1920;
-const int HEIGHT = 1200;
+const int WIDTH = 3840;
+const int HEIGHT = 2160;
 
 // The number of times to iterate before we assume that a point isn't in the
 // Mandelbrot set.
 // (You may need to turn this up if you zoom further into the set.)
-const int MAX_ITERATIONS = 10000;
+const int MAX_ITERATIONS = 1000;
 
 // The image data.
 // Each pixel is represented as 0xRRGGBB.
@@ -79,7 +79,7 @@ void write_tga(const char *filename)
 }
 
 
-void compute_thred(float left, float right, float top, float bottom, float start, float end) {
+void compute_thred(float left, float right, float top, float bottom, unsigned start, unsigned end) {
 	for (unsigned y = start; y < end; y++) {
 		for (unsigned x = 0; x < WIDTH; x++)
 		{
@@ -172,7 +172,7 @@ void compute_thred(float left, float right, float top, float bottom, float start
 void compute_mandelbrot(float left, float right, float top, float bottom, float start, float end)
 {
 	//amount of threads to use
-	const int THREADS = 100;
+	const int THREADS = 10;
 
 	//create vector of threads by rendering_threads
 	std::vector<thread>render_threads;
@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
 	//took 969ms to finish
 
 	// This zooms in on an interesting bit of detail.
-	compute_mandelbrot(-0.751085, -0.734975, 0.118378, 0.134488, 0, 1200);
+	compute_mandelbrot(-0.751085, -0.734975, 0.118378, 0.134488, 0, HEIGHT);
 
 
 	// Stop timing
@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
 	auto time_taken = duration_cast<milliseconds>(end - start).count();
 	cout << "Computing the Mandelbrot set took " << time_taken << " ms." << endl;
 
-	write_tga("outputcolortesting2.tga");
+	write_tga("something.tga");
 
 	return 0;
 }
