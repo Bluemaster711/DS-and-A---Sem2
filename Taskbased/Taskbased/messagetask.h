@@ -21,5 +21,4 @@ public:
 private:
 	const std::string message_;
 };
-
 #endif

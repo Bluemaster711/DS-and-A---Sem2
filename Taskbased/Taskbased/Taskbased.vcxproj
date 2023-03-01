@@ -128,7 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="messagetask.cpp" />
-    <ClCompile Include="Taskbased.cpp" />
+    <ClCompile Include="taskbased.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="farm.cpp" />

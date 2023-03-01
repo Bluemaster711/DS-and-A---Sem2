@@ -1,12 +1,9 @@
-// Task-based parallelism example
-// Adam Sampson <a.sampson@abertay.ac.uk>
-
 #include <iostream>
 #include <string>
 
 #include "farm.h"
-#include "task.h"
 #include "messagetask.h"
+#include "task.h"
 
 // Import things we need from the standard library
 using std::cout;

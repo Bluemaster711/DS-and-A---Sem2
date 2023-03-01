@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Taskbased.cpp">
+    <ClCompile Include="taskbased.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="messagetask.cpp">

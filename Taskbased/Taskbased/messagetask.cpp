@@ -1,5 +1,4 @@
 #include "messagetask.h"
-
 #include <iostream>
 
 using std::cout;
