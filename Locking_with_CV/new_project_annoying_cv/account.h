@@ -20,7 +20,7 @@ public:
 	/** Retrieve the total, formatted as a string (e.g. "GBP 4.95"). */
 	std::string total();
 
-	//std::mutex account_m;
+	//std::mutex account_m; //could be in private to restrict access
 
 private:
 	
