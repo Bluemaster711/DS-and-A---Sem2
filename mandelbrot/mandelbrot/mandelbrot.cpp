@@ -7,6 +7,12 @@
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <queue>
+#include <string>
+
+#include "mandelbrot.h"
+#include "mandelbrotask.h"
+#include "mandelbrotfarm.h"
 
 // Import things we need from the standard libraries.
 using std::chrono::duration_cast;
@@ -79,114 +85,114 @@ void write_tga(const char *filename)
 }
 
 
-void compute_thred(float left, float right, float top, float bottom, unsigned start, unsigned end) {
-	for (unsigned y = start; y < end; y++) {
-		for (unsigned x = 0; x < WIDTH; x++)
-		{
-			// Work out the point in the complex plane that
-				// corresponds to this pixel in the output image.
-			complex<float> c(left + (x * (right - left) / WIDTH),
-				top + (y * (bottom - top) / HEIGHT));
-			// Start off z at (0, 0).
-			complex<float> z(0.0, 0.0);
-			// Iterate z = z^2 + c until z moves more than 2 units
-			// away from (0, 0), or we've iterated too many times.
-			int iterations = 0;
-			while (abs(z) < 2.0 && iterations < MAX_ITERATIONS)
-			{
-				z = (z * z) + c;
-				++iterations;
-			}
-			if (iterations == MAX_ITERATIONS)
-			{
-				// z didn't escape from the circle.
-				// This point is in the Mandelbrot set.
-				image[y][x] = 0x000000; // black
-			}
-			else
-			{
-				// z escaped within less than MAX_ITERATIONS
-				// iterations. This point isn't in the set.
-				//image[y][x] = 0x89CFF0; // blue or could be white 0xFFFFFF
-
-				if (iterations <= 25)
-				{
-					image[y][x] = 0xFF0000;
-				}
-				else if (iterations <= 50)
-				{
-					image[y][x] = 0xFE6904;
-				}
-				else if (iterations <= 75)
-				{
-					image[y][x] = 0xFEE104;
-				}
-				else if (iterations <= 100)
-				{
-					image[y][x] = 0xB6FE04;
-				}
-				else if (iterations <= 125)
-				{
-					image[y][x] = 0x13FE04;
-				}
-				else if (iterations <= 150)
-				{
-					image[y][x] = 0x04FEA8;
-				}
-				else if (iterations <= 175)
-				{
-					image[y][x] = 0x04E1FE;
-				}
-				else if (iterations <= 200)
-				{
-					image[y][x] = 0x045BFE;
-				}
-				else if (iterations <= 250)
-				{
-					image[y][x] = 0x0904FE;
-				}
-				else if (iterations <= 300)
-				{
-					image[y][x] = 0x9404FE;
-				}
-				else if (iterations <= 400)
-				{
-					image[y][x] = 0xFE04E1;
-				}
-				else if (iterations <= 450)
-				{
-					image[y][x] = 0xFE047C;
-				}
-				else
-				{
-					image[y][x] = 0xFE0404;
-				}
-			}
-		}
-	}
-}
-
-
-// Render the Mandelbrot set into the image array.
-// The parameters specify the region on the complex plane to plot.
-void compute_mandelbrot(float left, float right, float top, float bottom, float start, float end)
-{
-	//amount of threads to use
-	const int THREADS = 10;
-
-	//create vector of threads by rendering_threads
-	std::vector<thread>render_threads;
-	//researve created threads
-	render_threads.reserve(THREADS);
-
-	//loop through compute_mandelbrot set
-	for (unsigned y = 0; y < HEIGHT; y += HEIGHT / THREADS) {
-		render_threads.emplace_back(&compute_thred, left, right, top, bottom, y, y + HEIGHT / THREADS);
-	}
-	for (auto& thread : render_threads) {
-		thread.join();
-	}
-}
+//void compute_thred(float left, float right, float top, float bottom, unsigned start, unsigned end) {
+//	for (unsigned y = start; y < end; y++) {
+//		//for (unsigned x = 0; x < WIDTH; x++)
+//		//{
+//		//	// Work out the point in the complex plane that
+//		//		// corresponds to this pixel in the output image.
+//		//	complex<float> c(left + (x * (right - left) / WIDTH),
+//		//		top + (y * (bottom - top) / HEIGHT));
+//		//	// Start off z at (0, 0).
+//		//	complex<float> z(0.0, 0.0);
+//		//	// Iterate z = z^2 + c until z moves more than 2 units
+//		//	// away from (0, 0), or we've iterated too many times.
+//		//	int iterations = 0;
+//		//	while (abs(z) < 2.0 && iterations < MAX_ITERATIONS)
+//		//	{
+//		//		z = (z * z) + c;
+//		//		++iterations;
+//		//	}
+//		//	if (iterations == MAX_ITERATIONS)
+//		//	{
+//		//		// z didn't escape from the circle.
+//		//		// This point is in the Mandelbrot set.
+//		//		image[y][x] = 0x000000; // black
+//		//	}
+//		//	else
+//		//	{
+//		//		// z escaped within less than MAX_ITERATIONS
+//		//		// iterations. This point isn't in the set.
+//		//		//image[y][x] = 0x89CFF0; // blue or could be white 0xFFFFFF
+//
+//		//		if (iterations <= 25)
+//		//		{
+//		//			image[y][x] = 0xFF0000;
+//		//		}
+//		//		else if (iterations <= 50)
+//		//		{
+//		//			image[y][x] = 0xFE6904;
+//		//		}
+//		//		else if (iterations <= 75)
+//		//		{
+//		//			image[y][x] = 0xFEE104;
+//		//		}
+//		//		else if (iterations <= 100)
+//		//		{
+//		//			image[y][x] = 0xB6FE04;
+//		//		}
+//		//		else if (iterations <= 125)
+//		//		{
+//		//			image[y][x] = 0x13FE04;
+//		//		}
+//		//		else if (iterations <= 150)
+//		//		{
+//		//			image[y][x] = 0x04FEA8;
+//		//		}
+//		//		else if (iterations <= 175)
+//		//		{
+//		//			image[y][x] = 0x04E1FE;
+//		//		}
+//		//		else if (iterations <= 200)
+//		//		{
+//		//			image[y][x] = 0x045BFE;
+//		//		}
+//		//		else if (iterations <= 250)
+//		//		{
+//		//			image[y][x] = 0x0904FE;
+//		//		}
+//		//		else if (iterations <= 300)
+//		//		{
+//		//			image[y][x] = 0x9404FE;
+//		//		}
+//		//		else if (iterations <= 400)
+//		//		{
+//		//			image[y][x] = 0xFE04E1;
+//		//		}
+//		//		else if (iterations <= 450)
+//		//		{
+//		//			image[y][x] = 0xFE047C;
+//		//		}
+//		//		else
+//		//		{
+//		//			image[y][x] = 0xFE0404;
+//		//		}
+//		//	}
+//		//}
+//	}
+//}
+//
+//
+//// Render the Mandelbrot set into the image array.
+//// The parameters specify the region on the complex plane to plot.
+//void compute_mandelbrot(float left, float right, float top, float bottom, float start, float end)
+//{
+//	//amount of threads to use
+//	const int THREADS = 10;
+//
+//	//create vector of threads by rendering_threads
+//	std::vector<thread>render_threads;
+//	//researve created threads
+//	render_threads.reserve(THREADS);
+//
+//	//loop through compute_mandelbrot set
+//	for (unsigned y = 0; y < HEIGHT; y += HEIGHT / THREADS) {
+//		render_threads.emplace_back(&compute_thred, left, right, top, bottom, y, y + HEIGHT / THREADS);
+//	}
+//	for (auto& thread : render_threads) {
+//		thread.join();
+//	}
+//}
 
 
 int main(int argc, char *argv[])
@@ -206,7 +212,18 @@ int main(int argc, char *argv[])
 	//took 969ms to finish
 
 	// This zooms in on an interesting bit of detail.
-	compute_mandelbrot(-0.751085, -0.734975, 0.118378, 0.134488, 0, HEIGHT);
+	//compute_mandelbrot(-0.751085, -0.734975, 0.118378, 0.134488, 0, HEIGHT);
+	float left = -2.0;
+	float right = 1.0;
+	float top = 1.125;
+	float bottom = -1.125;
+
+	Farm f;
+	for (int i = 0; i < HEIGHT; i++) {
+		f.add_task(new mandelbrotask(left, right, top, bottom, i));
+	}
+
+	f.run();
 
 
 	// Stop timing

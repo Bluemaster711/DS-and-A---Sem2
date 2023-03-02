@@ -18,5 +18,22 @@
     <ClCompile Include="mandelbrot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mandelbrotask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mandelbrotfarm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="mandelbrot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mandelbrotask.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mandelbrotfarm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

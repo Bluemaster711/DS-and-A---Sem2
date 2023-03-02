@@ -151,6 +151,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="mandelbrot.cpp" />
+    <ClCompile Include="mandelbrotask.cpp" />
+    <ClCompile Include="mandelbrotfarm.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="mandelbrot.h" />
+    <ClInclude Include="mandelbrotask.h" />
+    <ClInclude Include="mandelbrotfarm.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
