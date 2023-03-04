@@ -3,6 +3,8 @@
 #include "mandelbrotfarm.h"
 #include <iostream>
 
+
+
 void mandelbrotask::run() {
 
 	const int WIDTH = 3840;
@@ -89,5 +91,6 @@ void mandelbrotask::run() {
 			}
 		}
 	}
+	return;
 }
 

@@ -3,8 +3,6 @@
 #ifndef MENDELBROTASK_H
 #define MENDELBROTASK_H
 
-
-
 #include "mandelbrot.h"
 #include <queue>
 #include <thread>
@@ -30,4 +28,4 @@ private:
 
 };
 
-#endif // !MENDELBROTASK_H
+#endif
