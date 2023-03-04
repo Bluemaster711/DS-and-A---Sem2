@@ -199,8 +199,6 @@ int main(int argc, char *argv[])
 {
 	cout << "Please wait..." << endl;
 
-	// Start timing
-	the_clock::time_point start = the_clock::now();
 
 	// This shows the whole set.
 	//compute_mandelbrot(-2.0, 1.0, 1.125, -1.125, 200, 400);
@@ -213,16 +211,28 @@ int main(int argc, char *argv[])
 
 	// This zooms in on an interesting bit of detail.
 	//compute_mandelbrot(-0.751085, -0.734975, 0.118378, 0.134488, 0, HEIGHT);
+
+	//define the coordinates
 	float left = -2.0;
 	float right = 1.0;
 	float top = 1.125;
 	float bottom = -1.125;
 
+
+	//create farm f
 	Farm f;
+
+	//loop though the hright adding a task - using the coordinates
 	for (int i = 0; i < HEIGHT; i++) {
 		f.add_task(new mandelbrotask(left, right, top, bottom, i));
 	}
 
+
+	// Start timing
+	the_clock::time_point start = the_clock::now();
+
+
+	//run
 	f.run();
 
 
