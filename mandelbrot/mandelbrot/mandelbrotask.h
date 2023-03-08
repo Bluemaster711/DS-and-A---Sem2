@@ -19,6 +19,8 @@ public:
 
 	void run();
 
+	//extern "C" uint32_t image[HEIGHT][WIDTH];
+	//uint32_t image[HEIGHT][WIDTH];
 
 private:
 

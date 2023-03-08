@@ -39,12 +39,12 @@ const int MAX_ITERATIONS = 1000;
 
 // The image data.
 // Each pixel is represented as 0xRRGGBB.
-uint32_t image[HEIGHT][WIDTH];
+// uint32_t image[HEIGHT][WIDTH];
 
 
 // Write the image to a TGA file with the given name.
 // Format specification: http://www.gamers.org/dEngine/quake3/TGA.txt
-void write_tga(const char *filename)
+void write_tga(const char *filename, uint32_t** image)
 {
 	ofstream outfile(filename, ofstream::binary);
 
@@ -218,13 +218,21 @@ int main(int argc, char *argv[])
 	float top = 1.125;
 	float bottom = -1.125;
 
+	// [HEIGHT][WIDTH]
+	//creating an array of pointer, pointing towards an array of pointers 
+	uint32_t** image = new uint32_t* [HEIGHT];
+	//loop through and add width pointer to image[i] pointer
+	for (int i = 0; i < HEIGHT; i++) {
+		image[i] = new uint32_t[WIDTH];
+		//image[1] = image[1] -> [width]
+	}
 
 	//create farm f
 	Farm f;
 
 	//loop though the hright adding a task - using the coordinates
 	for (int i = 0; i < HEIGHT; i++) {
-		f.add_task(new mandelbrotask(left, right, top, bottom, i));
+		f.add_task(new mandelbrotask(left, right, top, bottom, i, (uint32_t**)image));
 	}
 
 
@@ -246,7 +254,7 @@ int main(int argc, char *argv[])
 	auto time_taken = duration_cast<milliseconds>(end - start).count();
 	cout << "Computing the Mandelbrot set took " << time_taken << " ms." << endl;
 
-	write_tga("something.tga");
+	write_tga("nope.tga", (uint32_t**)image);
 
 	return 0;
 }
